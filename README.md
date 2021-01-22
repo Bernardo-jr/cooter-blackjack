@@ -1,5 +1,5 @@
-# cooter-blackjack
-
+# Cooter blackjack
+blackjack hecho en Reactjs
 
 ### Te clonas el repo
 git clone https://github.com/Bernardo-jr/cooter-blackjack.git
