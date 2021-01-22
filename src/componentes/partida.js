@@ -26,15 +26,15 @@ export default class Partida extends Component{
         this.plantarse=this.plantarse.bind(this);
         this.refresh=this.refresh.bind(this);
     }
-
+    //evento inicial
     async componentDidMount(){
         await this.getCard(null,false);
         await this.getCard(null,true);
         await this.getCard(null,false);
         await this.getCard(null,true);
     }
-  
-    async plantarse(e){
+    //El pichon se planta
+    async plantarse(){
       var aux=this.state.casa;
       aux.forEach((c)=>{
         c.visible=true;
@@ -50,13 +50,13 @@ export default class Partida extends Component{
       }
     }
     }
-    
+   //reinicia la mano 
    async refresh(){
        await this.setState({...initialState,casa:[],pichon:[]});
         this.componentDidMount();
     }
     
-    
+  //cuenta los puntos   
   async contar(pts,as){
       let p=pts;
       if("JQK".includes(this.numero)){
@@ -81,7 +81,7 @@ export default class Partida extends Component{
       }
       return [p,as];
     }
-  
+    //valida que no se repitan las cartas
     async validar(){
       var exist=false;
       await this.state.casa.forEach((c)=>{
@@ -97,7 +97,7 @@ export default class Partida extends Component{
       console.log(exist);
       return exist;
     }
-    
+    //pide una carta
     async getCard(e,esCasa){
         this.index=Math.floor(Math.random() * palos.length);
         this.numero=valores[Math.floor(Math.random() * valores.length)];
@@ -167,9 +167,9 @@ export default class Partida extends Component{
         })}
         </Row>
         <Row className="justify-content-md-center">
-        <Button variant='outline-warning' onClick={(e)=>(this.state.fin)?null:this.getCard(e,false)}>Dame Carta</Button>&nbsp;
-        <Button variant='outline-warning' onClick={this.plantarse} >Plantarse</Button>&nbsp;
-        <Button variant='outline-warning' onClick={this.refresh} >Repartir</Button>&nbsp;
+        <Button variant={(this.state.fin)?'outline-warning':'warning'} onClick={(e)=>(this.state.fin)?null:this.getCard(e,false)}>Dame Carta</Button>&nbsp;
+        <Button variant={(this.state.fin)?'outline-warning':'warning'} onClick={(e)=>(this.state.fin)?null:this.plantarse(e)} >Plantarse</Button>&nbsp;
+        <Button variant={(!this.state.fin)?'outline-warning':'warning'} onClick={(e)=>(!this.state.fin)?null:this.refresh(e)} >Repartir</Button>&nbsp;
         </Row>
       </Container>)
     };
