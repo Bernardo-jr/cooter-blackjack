@@ -2,6 +2,8 @@ import {Component} from 'react';
 import pichonImg from '../pichon.png';
 import cooterImg from '../COOTER.png';
 import Carta from './carta';
+import mp from '../mp.webp';
+
 import {Container,Row,Col,Button,Card} from 'react-bootstrap';
 const initialState = {
     pichon:[],
@@ -11,6 +13,7 @@ const initialState = {
     casa:[],
     puntosCasa:0,
     asCasa:false,
+    win:0,
 };
 const valores=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const  palos=["♣" , "♠", "♥" , "♦" ];
@@ -34,7 +37,7 @@ export default class Partida extends Component{
         await this.getCard(null,true);
     }
     //El pichon se planta
-    async plantarse(){
+    async plantarse(e){
       var aux=this.state.casa;
       aux.forEach((c)=>{
         c.visible=true;
@@ -43,16 +46,32 @@ export default class Partida extends Component{
         fin:true,
         casa:[...aux]
       });
-    if(this.state.puntosPichon<21){
+    if(this.state.puntosPichon<21 || (this.state.puntosPichon===21 && this.state.pichon.length>2)){
       while(this.state.puntosCasa<17){
         aux=this.state.casa;
         await this.getCard(null,this.state.casa,this.state.puntosCasa);
       }
     }
+    var auxWin=this.state.win;
+    if(this.state.puntosCasa<=21 && (this.state.puntosCasa>this.state.puntosPichon || this.state.puntosPichon>21)){
+      if(this.state.puntosCasa===21 && this.state.casa.length===2){
+        await this.setState({win:auxWin-2});
+      }else{
+        await this.setState({win:auxWin-1});
+      }
+    }else if(this.state.puntosPichon<=21 &&  (this.state.puntosCasa<this.state.puntosPichon || this.state.puntosCasa>21)){
+      if(this.state.puntosPichon===21 && this.state.pichon.length===2){
+        await this.setState({win:auxWin+2});
+      }else{
+        await this.setState({win:auxWin+1});
+      }
+    }
+    console.log(this.state.win);
     }
    //reinicia la mano 
    async refresh(){
-       await this.setState({...initialState,casa:[],pichon:[]});
+     var aux=this.state.win;
+       await this.setState({...initialState,casa:[],pichon:[],win:aux});
         this.componentDidMount();
     }
     
@@ -94,7 +113,6 @@ export default class Partida extends Component{
           exist=true;
         }
       });
-      console.log(exist);
       return exist;
     }
     //pide una carta
@@ -120,15 +138,15 @@ export default class Partida extends Component{
           c.push({numero:this.numero,index:this.index,visible:false});
         }
         await this.setState({casa:[...c],puntosCasa:parseInt(aux[0]),asCasa:aux[1]});
-        if(this.state.puntosCasa>=21)
-        this.plantarse(null);
+
       }else{
         c=this.state.pichon; 
         var points=this.state.puntosPichon;
         aux=await this.contar(points,this.state.asPichon);
         c.push({numero:this.numero,index:this.index});
         await this.setState({pichon:[...c],puntosPichon:parseInt((aux[0])),asPichon:aux[1]},()=>{return this.puntosPichon;});
-        if(this.state.puntosPichon>=21)
+      }
+      if(!this.state.fin && (this.state.puntosCasa>=21 || this.state.puntosPichon>=21)){
         this.plantarse(null);
       }
     }
@@ -138,6 +156,10 @@ export default class Partida extends Component{
         return( 
         <Container bg='#' style={{padding:'1.5rem 0'}}>
         <img className='left' height='240' src={cooterImg} style={{position:'absolute',margin:'2rem 0'}} />
+        <div style={{position:'absolute',padding:'.5rem 1rem',right:'2rem',bottom:'2rem'}}>
+
+        <label className='text-center' style={{padding:'.25rem 1rem',width:'100%',backgroundColor:'white'}}>{this.state.win + " pts"}</label>
+        </div>
         <Row style={{padding:'2rem 0', minHeight:'18rem'}} className="justify-content-md-center">   
         {this.state.casa.map((card,i)=>{
           return (card.visible)
