@@ -155,7 +155,7 @@ export default class Partida extends Component{
     render(){
         return( 
         <Container bg='#' style={{padding:'1.5rem 0'}}>
-        <img className='left' height='240' src={cooterImg} style={{position:'absolute',margin:'2rem 0'}} />
+        <img className='left' height='240' src={cooterImg} style={{position:'absolute',left:'2rem',margin:'2rem 0'}} />
         <div style={{position:'absolute',padding:'.5rem 1rem',right:'2rem',bottom:'2rem'}}>
 
         <label className='text-center' style={{padding:'.25rem 1rem',width:'100%',backgroundColor:'white'}}>{this.state.win + " pts"}</label>
