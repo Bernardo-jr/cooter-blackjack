@@ -1,8 +1,10 @@
 import {Component} from 'react';
 import pichonImg from '../pichon.png';
-import cooterImg from '../COOTER.png';
+import cooterImg from '../cooter.png';
+import loseImg from '../lose.png';
+import drawImg from '../draw.png';
+import winImg from '../win.png';
 import Carta from './carta';
-import mp from '../mp.webp';
 
 import {Container,Row,Col,Button,Card} from 'react-bootstrap';
 const initialState = {
@@ -14,6 +16,7 @@ const initialState = {
     puntosCasa:0,
     asCasa:false,
     win:0,
+    img:cooterImg
 };
 const valores=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
 const  palos=["♣" , "♠", "♥" , "♦" ];
@@ -67,6 +70,13 @@ export default class Partida extends Component{
       }
     }
     console.log(this.state.win);
+    if(this.state.puntosPichon>21 || (this.state.puntosCasa<=21 && this.state.puntosCasa>this.state.puntosPichon)){
+      this.setState({img:loseImg});//perdio
+    }else if(this.state.puntosPichon===this.state.puntosCasa){
+      this.setState({img:drawImg});//empate
+    }else{
+      this.setState({img:winImg});//gano
+    }
     }
    //reinicia la mano 
    async refresh(){
@@ -155,10 +165,10 @@ export default class Partida extends Component{
     render(){
         return( 
         <Container bg='#' style={{padding:'1.5rem 0'}}>
-        <img className='left' height='240' src={cooterImg} style={{position:'absolute',left:'2rem',margin:'2rem 0'}} />
-        <div style={{position:'absolute',padding:'.5rem 1rem',right:'2rem',bottom:'2rem'}}>
+        <img className='left' height='600' src={this.state.img} style={{position:'absolute',left:'2rem',margin:'2rem 0',zIndex:100}} />
+        <div style={{position:'absolute',padding:'.5rem 1rem',right:'2rem',top:'2rem'}}>
 
-        <label className='text-center' style={{padding:'.25rem 1rem',width:'100%',backgroundColor:'white'}}>{this.state.win + " pts"}</label>
+        <h1><label className='text-center rounded-pill' style={{padding: '.5rem 1.5rem',width:'100%',backgroundColor:'#f6ce02'}}>{this.state.win + " pts"}</label></h1>
         </div>
         <Row style={{padding:'2rem 0', minHeight:'18rem'}} className="justify-content-md-center">   
         {this.state.casa.map((card,i)=>{
@@ -170,21 +180,13 @@ export default class Partida extends Component{
 
         })}
         </Row>
-        <Row style={{minHeight:'2rem'}} className="text-warning justify-content-md-center">
-          {
-            (this.state.fin)
-            ?(this.state.puntosPichon>21 || (this.state.puntosCasa<=21 && this.state.puntosCasa>this.state.puntosPichon))
-            ?<Col xs lg="4" className="text-center"><h3>Te bailé sabroso</h3></Col>
-            :(this.state.puntosPichon===this.state.puntosCasa)
-            ?<Col xs lg="4" className="text-center"><h3>Desempate ?</h3></Col>
-            :<Col xs lg="4" className="text-center"><h3>Caimos ante el mejor </h3></Col>
-            :<Col></Col>
-          }
-        </Row>
+
         <Row style={{padding:'2rem 0', minHeight:'18rem'}}  className="justify-content-md-center">   
         {this.state.pichon.map((card,i)=>{
           return <Col xs lg="2" key={i}>
+                <Col>
                   <Carta numero={card.numero} palo={palos[card.index]} color={card.index<=1?'text-black':'text-danger'} />
+                 </Col>
                 </Col> 
         })}
         </Row>
